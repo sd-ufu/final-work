@@ -4,24 +4,24 @@ package com.other.shopcl.client;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
-import org.deepak.grpc.protoFiles.Products.APIResponse;
-import org.deepak.grpc.protoFiles.Products.prodId;
-import org.deepak.grpc.protoFiles.Products.product;
+import sdufu.finalwork.proto.product.Product.APIResponse;
+import sdufu.finalwork.proto.product.Product.ProdId;
+import sdufu.finalwork.proto.product.Product.product;
+
+import sdufu.finalwork.proto.product.ProductServiceGrpc;
+import sdufu.finalwork.proto.product.ProductServiceGrpc.ProductServiceBlockingStub;
 
 import java.util.Scanner;
 
-import org.deepak.grpc.protoFiles.productsGrpc;
-import org.deepak.grpc.protoFiles.productsGrpc.productsBlockingStub;;
 public class GRPCClient {
-
-	public static void main(String[] args){
+	public static void main(String[] args) {
 		ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9089).usePlaintext().build();
-		
-		productsBlockingStub prodStub = productsGrpc.newBlockingStub(channel);
+
+		ProductServiceBlockingStub prodStub = ProductServiceGrpc.newBlockingStub(channel);
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Enter the operation");
-		Integer opr  = scanner.nextInt();
+		Integer opr = scanner.nextInt();
 		switch (opr) {
 		case 1:
 			System.out.println("Enter the product Name");
@@ -37,13 +37,13 @@ public class GRPCClient {
 		case 2:
 			System.out.println("Enter the product id");
 			Integer id = scanner.nextInt();
-			prodId req = prodId.newBuilder().setId(id).build();
+			ProdId req = ProdId.newBuilder().setId(id).build();
 			APIResponse responses = prodStub.getProduct(req);
 			System.out.println(responses);
 			break;
 		default:
 			break;
-		}		
-		
+		}
+
 	}
 }

@@ -1,18 +1,18 @@
 //$Id$
 package com.deepak.grpc.products;
 
-import org.deepak.grpc.protoFiles.Products.APIResponse;
-import org.deepak.grpc.protoFiles.Products.prodId;
-import org.deepak.grpc.protoFiles.Products.product;
-import org.deepak.grpc.protoFiles.productsGrpc.productsImplBase;
+import sdufu.finalwork.proto.product.Product.APIResponse;
+import sdufu.finalwork.proto.product.Product.ProdId;
+import sdufu.finalwork.proto.product.Product.product;
+import sdufu.finalwork.proto.product.ProductServiceGrpc.ProductServiceImplBase;
 
 import io.grpc.stub.StreamObserver;
 
-public class ProductService extends productsImplBase {
+public class ProductService extends ProductServiceImplBase {
 
 	@Override
-	public void getProduct(prodId request, StreamObserver<APIResponse> responseObserver) {
-		try{
+	public void getProduct(ProdId request, StreamObserver<APIResponse> responseObserver) {
+		try {
 			Products product = new Products();
 			product.setId(request.getId());
 			product.setName("PRODUCT_NAME");
@@ -21,8 +21,7 @@ public class ProductService extends productsImplBase {
 			System.out.println("rset");
 			APIResponse.Builder response = APIResponse.newBuilder();
 			response.setMessageCode(0).setResponseMessage(product.toString());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		APIResponse.Builder response = APIResponse.newBuilder();
@@ -38,12 +37,11 @@ public class ProductService extends productsImplBase {
 		product.setName(name);
 		product.setPrice(price);
 		product.setStock(stock);
-		try{
+		try {
 			APIResponse.Builder response = APIResponse.newBuilder();
 			response.setMessageCode(0).setResponseMessage("values inserted");
 			System.out.println("values inserted");
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			APIResponse.Builder response = APIResponse.newBuilder();
 			response.setMessageCode(0).setResponseMessage("values not inserted");
 			e.printStackTrace();
@@ -51,14 +49,12 @@ public class ProductService extends productsImplBase {
 
 	}
 
-
 	@Override
-	public void deleteProduct(prodId request, StreamObserver<APIResponse> responseObserver) {
-		try{
+	public void deleteProduct(ProdId request, StreamObserver<APIResponse> responseObserver) {
+		try {
 			APIResponse.Builder response = APIResponse.newBuilder();
 			response.setMessageCode(0).setResponseMessage("deleted: " + request.getId());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			APIResponse.Builder response = APIResponse.newBuilder();
 			response.setMessageCode(0).setResponseMessage("failed");
 			e.printStackTrace();
