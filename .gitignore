@@ -24,6 +24,7 @@ hs_err_pid*
 
 # Build folder
 target
+bin
 
 # Java proto files folder
 src/main/java/sdufu/finalwork/proto
