@@ -1,5 +1,5 @@
 //$Id$
-package com.deepak.grpc.products;
+package sdufu.finalwork.grpc.product;
 
 import sdufu.finalwork.proto.product.Product.APIResponse;
 import sdufu.finalwork.proto.product.Product.ProdId;

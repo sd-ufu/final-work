@@ -1,5 +1,5 @@
 //$Id$
-package com.deepak.grpc.products;
+package sdufu.finalwork.grpc.product;
 
 public class Products {
 	private int id;

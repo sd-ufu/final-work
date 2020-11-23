@@ -1,12 +1,11 @@
 //$Id$
-package com.deepak.grpc.server;
+package sdufu.finalwork.grpc.server;
 
 import java.io.IOException;
 
-import com.deepak.grpc.products.ProductService;
-
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import sdufu.finalwork.grpc.product.ProductService;
 
 public class GRPCServer {
 	public static void main(String[] args) throws IOException, InterruptedException {
