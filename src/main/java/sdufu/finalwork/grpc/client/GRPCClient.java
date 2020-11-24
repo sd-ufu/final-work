@@ -1,5 +1,4 @@
-//$Id$
-package com.other.shopcl.client;
+package sdufu.finalwork.grpc.client;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;

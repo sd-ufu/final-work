@@ -28,3 +28,6 @@ bin
 
 # Java proto files folder
 src/main/java/sdufu/finalwork/proto
+
+# Mac OS
+.DS_Store
