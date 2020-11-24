@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+option java_package = "sdufu.finalwork.proto.database";
+
+service DatabaseService {
+	rpc Set(SetRequest) returns (APIResponse);
+	rpc Get(GetRequest) returns (APIResponse);
+	rpc Del(DelRequest) returns (APIResponse);
+	rpc TestAndSet(TestAndSetRequest) returns (APIResponse);
+}
+
+message SetRequest {
+	int64 k = 1;
+	int64 ts = 2;
+	repeated bytes d = 3;
+}
+
+message GetRequest {
+	int64 k = 1;
+}
+
+message DelRequest {
+	int64 k = 1;
+	int64 vers = 2;
+}
+
+message TestAndSetRequest {
+	int64 k = 1;
+	int64 v = 2;
+	int64 vers = 3;
+}
+
+message APIResponse {
+	string e = 1;
+	APIResponseData v = 2;
+}
+
+message APIResponseData {
+	int64 ver = 1;
+	int64 ts = 2;
+	repeated bytes data = 3;
+}
