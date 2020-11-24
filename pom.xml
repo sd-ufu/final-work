@@ -10,9 +10,28 @@
 	<version>0.0.1</version>
 	<name>finalwork</name>
 
+	<profiles>
+    <profile>
+      <id>client</id>
+      <properties>
+        <jar.name>client</jar.name>
+        <file.path>sdufu.finalwork.grpc.client.GRPCClient</file.path>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>server</id>
+      <properties>
+        <jar.name>server</jar.name>
+        <file.path>sdufu.finalwork.grpc.server.GRPCServer</file.path>
+      </properties>
+    </profile>
+  </profiles>
+
 	<build>
 		<defaultGoal>clean generate-sources compile install</defaultGoal>
-		<finalName>finalwork</finalName>
+		<finalName>finalwork-${jar.name}</finalName>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -33,8 +52,8 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>sdufu.finalwork.grpc.client.GRPCClient</mainClass>
-							<classpathPrefix>dependency-jars/</classpathPrefix>
+							<mainClass>${file.path}</mainClass>
+							<classpathPrefix>jars/</classpathPrefix>
 						</manifest>
 					</archive>
 				</configuration>
@@ -53,7 +72,7 @@
 						</goals>
 						<configuration>
 							<outputDirectory>
-								${project.build.directory}/dependency-jars/
+								${project.build.directory}/jars/
 							</outputDirectory>
 						</configuration>
 					</execution>

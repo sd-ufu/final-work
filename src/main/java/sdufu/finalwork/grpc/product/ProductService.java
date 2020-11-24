@@ -6,26 +6,42 @@ import sdufu.finalwork.proto.product.Product.ProdId;
 import sdufu.finalwork.proto.product.Product.product;
 import sdufu.finalwork.proto.product.ProductServiceGrpc.ProductServiceImplBase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.grpc.stub.StreamObserver;
 
 public class ProductService extends ProductServiceImplBase {
+	
+	static List<Products> products = new ArrayList<Products>(); 
 
 	@Override
 	public void getProduct(ProdId request, StreamObserver<APIResponse> responseObserver) {
 		try {
-			Products product = new Products();
-			product.setId(request.getId());
-			product.setName("PRODUCT_NAME");
-			product.setPrice(10);
-			product.setStock(1);
-			System.out.println("rset");
+			int id = request.getId();
+			Products product = null;
+
+			System.out.println("GET: " + id);
+
+			for (Products p : ProductService.products) {
+				if (p.getId() == id) product = p;
+	        }
+
+			if (product != null) System.out.println("FIND: " + product.toString());
+			else throw new Exception("ID NOT FOUND");
+
 			APIResponse.Builder response = APIResponse.newBuilder();
 			response.setMessageCode(0).setResponseMessage(product.toString());
+			responseObserver.onNext(response.build());
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		APIResponse.Builder response = APIResponse.newBuilder();
-		response.setMessageCode(0).setResponseMessage("Sorry");
+
+			APIResponse.Builder response = APIResponse.newBuilder();
+			response.setMessageCode(0).setResponseMessage("Sorry");
+			responseObserver.onNext(response.build());
+		} finally {
+			responseObserver.onCompleted();
+		}		
 	}
 
 	@Override
@@ -33,31 +49,67 @@ public class ProductService extends ProductServiceImplBase {
 		String name = request.getProdName();
 		Integer price = request.getProdPrice();
 		Integer stock = request.getProdStock();
+		int id = (int) System.currentTimeMillis();
 		Products product = new Products();
+		product.setId(id);
 		product.setName(name);
 		product.setPrice(price);
 		product.setStock(stock);
 		try {
+			ProductService.products.add(product);
 			APIResponse.Builder response = APIResponse.newBuilder();
-			response.setMessageCode(0).setResponseMessage("values inserted");
+			response.setMessageCode(0).setResponseMessage("values inserted: " + id);
 			System.out.println("values inserted");
+			System.out.println("ID: " + id);
+			System.out.println("NAME: " + name);
+			System.out.println("PRICE: " + price);
+			System.out.println("STOCK: " + stock);
+
+			responseObserver.onNext(response.build());
 		} catch (Exception e) {
 			APIResponse.Builder response = APIResponse.newBuilder();
-			response.setMessageCode(0).setResponseMessage("values not inserted");
+			response.setMessageCode(0).setResponseMessage("values not inserted: " + id);
 			e.printStackTrace();
-		}
 
+			responseObserver.onNext(response.build());
+		} finally {
+			responseObserver.onCompleted();
+		}
 	}
 
 	@Override
 	public void deleteProduct(ProdId request, StreamObserver<APIResponse> responseObserver) {
+		int id = request.getId();
+		int index = -1;
+
+		System.out.println("DELETE: " + id);
+
 		try {
+			for (int i = 0; i < ProductService.products.size(); i++) {
+				Products p = ProductService.products.get(i);
+
+				if (p.getId() != id) continue;
+
+				index = i;
+				break;
+			}
+
+			if (index == -1) throw new Exception("ID NOT FOUND");
+
+			ProductService.products.remove(index);
+
 			APIResponse.Builder response = APIResponse.newBuilder();
-			response.setMessageCode(0).setResponseMessage("deleted: " + request.getId());
+			response.setMessageCode(0).setResponseMessage("deleted: " + id);
+
+			responseObserver.onNext(response.build());
 		} catch (Exception e) {
 			APIResponse.Builder response = APIResponse.newBuilder();
-			response.setMessageCode(0).setResponseMessage("failed");
+			response.setMessageCode(0).setResponseMessage("failed: " + id);
 			e.printStackTrace();
+
+			responseObserver.onNext(response.build());
+		} finally {
+			responseObserver.onCompleted();
 		}
 	}
 }
