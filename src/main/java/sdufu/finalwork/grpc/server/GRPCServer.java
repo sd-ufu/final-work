@@ -12,7 +12,6 @@ public class GRPCServer {
 		System.out.println("Starting grpc server");
 		Server server = ServerBuilder.forPort(9089).addService(new ProductService()).build(); // create a instance of
 																								// server
-
 		server.start();
 		System.out.println("Server Started at " + server.getPort());
 		server.awaitTermination();

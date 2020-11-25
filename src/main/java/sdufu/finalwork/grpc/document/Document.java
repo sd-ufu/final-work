@@ -1,6 +1,10 @@
 package sdufu.finalwork.grpc.document;
 
-public class Document {
+import java.io.Serializable;
+
+public class Document implements Serializable {
+	private static final long serialVersionUID = 1L;
+
 	private long version;
 	private long timestamp;
 	private byte[] data;

@@ -1,19 +1,24 @@
 //$Id$
 package sdufu.finalwork.grpc.product;
 
+import sdufu.finalwork.grpc.document.Document;
+import sdufu.finalwork.grpc.document.Table;
+import sdufu.finalwork.grpc.document.TableFactory;
 import sdufu.finalwork.proto.product.Product.APIResponse;
 import sdufu.finalwork.proto.product.Product.ProdId;
 import sdufu.finalwork.proto.product.Product.product;
 import sdufu.finalwork.proto.product.ProductServiceGrpc.ProductServiceImplBase;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import io.grpc.stub.StreamObserver;
 
 public class ProductService extends ProductServiceImplBase {
-	
-	static List<Products> products = new ArrayList<Products>(); 
+
+	static List<Products> products = new ArrayList<Products>();
+	static Table table = TableFactory.getTable();
 
 	@Override
 	public void getProduct(ProdId request, StreamObserver<APIResponse> responseObserver) {
@@ -24,11 +29,18 @@ public class ProductService extends ProductServiceImplBase {
 			System.out.println("GET: " + id);
 
 			for (Products p : ProductService.products) {
-				if (p.getId() == id) product = p;
-	        }
+				if (p.getId() == id)
+					product = p;
+			}
 
-			if (product != null) System.out.println("FIND: " + product.toString());
-			else throw new Exception("ID NOT FOUND");
+			Document doc = table.get(new BigInteger(Integer.toString(id)));
+			System.out.println("DOCUMENT: " + doc.getTimestamp());
+			System.out.println(doc);
+
+			if (product != null)
+				System.out.println("FIND: " + product.toString());
+			else
+				throw new Exception("ID NOT FOUND");
 
 			APIResponse.Builder response = APIResponse.newBuilder();
 			response.setMessageCode(0).setResponseMessage(product.toString());
@@ -41,7 +53,7 @@ public class ProductService extends ProductServiceImplBase {
 			responseObserver.onNext(response.build());
 		} finally {
 			responseObserver.onCompleted();
-		}		
+		}
 	}
 
 	@Override
@@ -64,6 +76,9 @@ public class ProductService extends ProductServiceImplBase {
 			System.out.println("NAME: " + name);
 			System.out.println("PRICE: " + price);
 			System.out.println("STOCK: " + stock);
+			Document doc = new Document();
+			doc.setTimestamp(id);
+			table.put(new BigInteger(Integer.toString(id)), doc);
 
 			responseObserver.onNext(response.build());
 		} catch (Exception e) {
@@ -88,13 +103,15 @@ public class ProductService extends ProductServiceImplBase {
 			for (int i = 0; i < ProductService.products.size(); i++) {
 				Products p = ProductService.products.get(i);
 
-				if (p.getId() != id) continue;
+				if (p.getId() != id)
+					continue;
 
 				index = i;
 				break;
 			}
 
-			if (index == -1) throw new Exception("ID NOT FOUND");
+			if (index == -1)
+				throw new Exception("ID NOT FOUND");
 
 			ProductService.products.remove(index);
 
