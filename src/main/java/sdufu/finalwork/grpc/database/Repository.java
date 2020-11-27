@@ -17,10 +17,15 @@ public class Repository {
 
 		try {
 			DatabaseIO.saveDocument(key, value);
+			DatabaseIO.saveDatabase(this.database);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return response;
+	}
+	
+	public Document get(BigInteger key) {
+		return this.database.get(key);
 	}
 }

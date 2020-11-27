@@ -1,7 +1,6 @@
 package sdufu.finalwork.grpc.service;
 
 import java.math.BigInteger;
-import java.util.List;
 
 import com.google.protobuf.ByteString;
 
@@ -10,6 +9,7 @@ import sdufu.finalwork.grpc.database.Repository;
 import sdufu.finalwork.grpc.database.model.Document;
 import sdufu.finalwork.proto.database.Database.APIResponse;
 import sdufu.finalwork.proto.database.Database.APIResponseData;
+import sdufu.finalwork.proto.database.Database.GetRequest;
 import sdufu.finalwork.proto.database.Database.SetRequest;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc.DatabaseServiceImplBase;;
 
@@ -22,13 +22,13 @@ public class DocumentService extends DatabaseServiceImplBase {
 
 	@Override
 	public void set(SetRequest request, StreamObserver<APIResponse> responseObserver) {
-		BigInteger key = new BigInteger(Long.toString(request.getK()));
-		List<ByteString> data = request.getDList();
+		BigInteger key = ProtoBigIntegerService.read(request.getK());
+		ByteString data = request.getD();
 		long timestamp = request.getTs();
 
 		Document doc = new Document();
 		doc.setVersion(1);
-		doc.setData((ByteString[]) data.toArray());
+		doc.setData(data.toByteArray());
 		doc.setTimestamp(timestamp);
 
 		this.repository.put(key, doc);
@@ -41,19 +41,34 @@ public class DocumentService extends DatabaseServiceImplBase {
 			e.printStackTrace();
 
 			APIResponse.Builder response = APIResponse.newBuilder();
-			APIResponseData.Builder builder = APIResponseData.newBuilder().setTs(doc.getTimestamp())
-					.setVer(doc.getVersion());
-
-			for (int i = 0; i < data.size(); i++) {
-				builder.setData(i, data.get(i));
-			}
-
-			APIResponseData apiResponseData = builder.build();
+			APIResponseData apiResponseData = APIResponseData.newBuilder().setTs(doc.getTimestamp())
+					.setVer(doc.getVersion()).setData(data).build();
 
 			response.setE("ERROR").setV(apiResponseData);
 			responseObserver.onNext(response.build());
 		} finally {
 			responseObserver.onCompleted();
 		}
+	}
+
+	@Override
+	public void get(GetRequest request, StreamObserver<APIResponse> responseObserver) {
+		BigInteger key = ProtoBigIntegerService.read(request.getK());
+		Document document = this.repository.get(key);
+
+		APIResponse.Builder response = APIResponse.newBuilder();
+
+		if (document != null) {
+			ByteString data = ByteString.copyFrom(document.getData());
+			System.out.println("D: " + document.getData().toString());
+			APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(document.getVersion())
+					.setTs(document.getTimestamp()).setData(data).build();
+			response.setE("SUCCESS").setV(apiResponseData);
+		} else {
+			response.setE("ERROR");
+		}
+
+		responseObserver.onNext(response.build());
+		responseObserver.onCompleted();
 	}
 }

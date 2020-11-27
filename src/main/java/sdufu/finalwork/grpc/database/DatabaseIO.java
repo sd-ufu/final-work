@@ -22,7 +22,8 @@ public class DatabaseIO {
 			FileInputStream fileInputStream = new FileInputStream(file);
 			ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 
-			return (Database) objectInputStream.readObject();
+			Database db = (Database) objectInputStream.readObject();
+			return db;
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {

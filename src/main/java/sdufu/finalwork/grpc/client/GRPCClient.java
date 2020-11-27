@@ -1,15 +1,16 @@
 package sdufu.finalwork.grpc.client;
 
 import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 import java.util.Scanner;
 
 import com.google.protobuf.ByteString;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import sdufu.finalwork.grpc.service.ProtoBigIntegerService;
 import sdufu.finalwork.proto.database.Database.APIResponse;
+import sdufu.finalwork.proto.database.Database.GetRequest;
+import sdufu.finalwork.proto.database.Database.ProtoBigInteger;
 import sdufu.finalwork.proto.database.Database.SetRequest;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc.DatabaseServiceBlockingStub;
@@ -29,28 +30,11 @@ public class GRPCClient {
 		while (opr != 0) {
 			switch (opr) {
 			case 1:
-				System.out.println("Enter the document KEY");
-				BigInteger key = scanner.nextBigInteger();
-
-				System.out.println("Enter the document DATA");
-				String text = scanner.next();
-				System.out.println("MY_TEXT: " + text);
-				ByteString data = ByteString.copyFrom(text.getBytes());
-
-				SetRequest request = SetRequest.newBuilder().setTs(System.currentTimeMillis()).setK(1).setD(0, data).build();
-				APIResponse response = stub.set(request);
-
-				System.out.println("SET RESPONSE");
-				System.out.println(response);
+				this.startSetFlow(scanner, stub);
 				break;
-//			case 2:
-//				System.out.println("Enter the product id");
-//				Integer idToGet = scanner.nextInt();
-//				ProdId reqToGet = ProdId.newBuilder().setId(idToGet).build();
-//				APIResponse getResponse = prodStub.getProduct(reqToGet);
-//				System.out.println("GET RESPONSE");
-//				System.out.println(getResponse);
-//				break;
+			case 2:
+				this.startGetFlow(scanner, stub);
+				break;
 //			case 3:
 //				System.out.println("Enter the product id");
 //				Integer id = scanner.nextInt();
@@ -67,14 +51,56 @@ public class GRPCClient {
 			this.showMenu();
 			opr = scanner.nextInt();
 		}
-
 	}
-	
+
+	private void startSetFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
+		System.out.println("Enter the document KEY");
+		BigInteger key = scanner.nextBigInteger();
+		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
+
+		System.out.println("Enter the document DATA");
+		String text = scanner.next();
+		System.out.println("MY_TEXT: " + text);
+		ByteString data = ByteString.copyFrom(text.getBytes());
+
+		SetRequest request = SetRequest.newBuilder().setTs(System.currentTimeMillis()).setK(transformedKey).setD(data)
+				.build();
+		APIResponse response = stub.set(request);
+
+		System.out.println("SET RESPONSE");
+		System.out.println(response);
+	}
+
+	private void startGetFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
+		System.out.println("Enter the product id");
+		BigInteger key = scanner.nextBigInteger();
+		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
+
+		GetRequest request = GetRequest.newBuilder().setK(transformedKey).build();
+		APIResponse response = stub.get(request);
+
+		System.out.println("GET RESPONSE");
+		System.out.println(response);
+	}
+
 	private void showMenu() {
-		System.out.println("Press 0 to stop client");
-		System.out.println("Press 1 to SET DOCUMENT");
-//		System.out.println("Press 2 to get product");
-//		System.out.println("Press 3 to delete product");
 		System.out.println("Enter the operation");
+		System.out.println(this.getText("0", "to STOP CLIENT"));
+		System.out.println(this.getText("1", "to SET DOCUMENT"));
+		System.out.println(this.getText("2", "to GET DOCUMENT"));
+	}
+
+	private String getText(String opt, String text) {
+		final String BLUE = "\u001B[34m";
+		final String BOLD = "\033[0;1m";
+		final String RESET_BOLD = "\033[0;0m";
+		final String RESET_COLOR = "\u001B[0m";
+
+		String str = "Press " + BOLD + BLUE;
+		str = str.concat(opt);
+		str = str.concat(RESET_COLOR + RESET_BOLD);
+		str = str.concat(" " + text);
+
+		return str;
 	}
 }
