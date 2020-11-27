@@ -15,7 +15,7 @@
       <id>client</id>
       <properties>
         <jar.name>client</jar.name>
-        <file.path>sdufu.finalwork.grpc.client.GRPCClient</file.path>
+        <file.path>sdufu.finalwork.main.Client</file.path>
       </properties>
     </profile>
 
@@ -23,7 +23,7 @@
       <id>server</id>
       <properties>
         <jar.name>server</jar.name>
-        <file.path>sdufu.finalwork.grpc.server.GRPCServer</file.path>
+        <file.path>sdufu.finalwork.main.Server</file.path>
       </properties>
     </profile>
   </profiles>

@@ -1,13 +1,15 @@
-package sdufu.finalwork.grpc.document;
+package sdufu.finalwork.grpc.database.model;
 
 import java.io.Serializable;
+
+import com.google.protobuf.ByteString;
 
 public class Document implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private long version;
 	private long timestamp;
-	private byte[] data;
+	private ByteString[] data;
 
 	public long getVersion() {
 		return version;
@@ -25,11 +27,11 @@ public class Document implements Serializable {
 		this.timestamp = timestamp;
 	}
 
-	public byte[] getData() {
+	public ByteString[] getData() {
 		return data;
 	}
 
-	public void setData(byte[] data) {
+	public void setData(ByteString[] data) {
 		this.data = data;
 	}
 }
