@@ -60,7 +60,7 @@ public class GRPCClient {
 
 		System.out.println("Enter the document DATA");
 		String text = scanner.next();
-		System.out.println("MY_TEXT: " + text);
+
 		ByteString data = ByteString.copyFrom(text.getBytes());
 
 		SetRequest request = SetRequest.newBuilder().setTs(System.currentTimeMillis()).setK(transformedKey).setD(data)
