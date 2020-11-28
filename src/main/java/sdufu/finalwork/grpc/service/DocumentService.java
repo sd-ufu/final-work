@@ -36,21 +36,7 @@ public class DocumentService {
 		doc.setData(data);
 		doc.setTimestamp(timestamp);
 
-		try {
-			this.databaseIO.saveStorageDocument(key, doc);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		Document response = this.repository.put(key, doc);
-
-		try {
-			this.databaseIO.deleteStorageDocument(key);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return response;
+		return this.save(key, doc);
 	}
 
 	/*
@@ -91,6 +77,28 @@ public class DocumentService {
 	}
 
 	/*
+	 * Method to test update document
+	 */
+	public Document testAndSet(BigInteger key, long version, byte[] data, long timestamp) throws DocumentException {
+		Document docInDataBase = this.get(key);
+
+		if (docInDataBase == null) {
+			throw new DocumentException(DocumentExceptionTypes.DOCUMENT_DOES_NOT_EXIST);
+		}
+
+		if (docInDataBase.getVersion() != version) {
+			throw new DocumentException(DocumentExceptionTypes.DIFFERENT_DOCUMENT_VERSION);
+		}
+
+		Document newDoc = new Document();
+		newDoc.setVersion(version);
+		newDoc.setData(data);
+		newDoc.setTimestamp(timestamp);
+
+		return this.save(key, newDoc);
+	}
+
+	/*
 	 * Method to delete document
 	 */
 	private Document delete(BigInteger key, Document document) {
@@ -101,6 +109,27 @@ public class DocumentService {
 		}
 
 		Document response = this.repository.remove(key);
+
+		try {
+			this.databaseIO.deleteStorageDocument(key);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return response;
+	}
+
+	/*
+	 * Method to save document
+	 */
+	private Document save(BigInteger key, Document doc) {
+		try {
+			this.databaseIO.saveStorageDocument(key, doc);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		Document response = this.repository.put(key, doc);
 
 		try {
 			this.databaseIO.deleteStorageDocument(key);

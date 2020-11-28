@@ -14,7 +14,9 @@ import sdufu.finalwork.proto.database.Database.APIResponse;
 import sdufu.finalwork.proto.database.Database.APIResponseData;
 import sdufu.finalwork.proto.database.Database.DelRequest;
 import sdufu.finalwork.proto.database.Database.GetRequest;
+import sdufu.finalwork.proto.database.Database.SetAndTestData;
 import sdufu.finalwork.proto.database.Database.SetRequest;
+import sdufu.finalwork.proto.database.Database.TestAndSetRequest;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc.DatabaseServiceImplBase;
 
 public class DocumentController extends DatabaseServiceImplBase {
@@ -36,7 +38,6 @@ public class DocumentController extends DatabaseServiceImplBase {
 			this.documentService.set(key, data.toByteArray(), timestamp);
 
 			response.setE("SUCCESS");
-			responseObserver.onNext(response.build());
 		} catch (DocumentException e) {
 			e.printStackTrace();
 
@@ -47,10 +48,10 @@ public class DocumentController extends DatabaseServiceImplBase {
 					.setVer(doc.getVersion()).setData(data).build();
 
 			response.setE("ERROR").setV(apiResponseData);
-			responseObserver.onNext(response.build());
-		} finally {
-			responseObserver.onCompleted();
 		}
+
+		responseObserver.onNext(response.build());
+		responseObserver.onCompleted();
 	}
 
 	@Override
@@ -87,6 +88,52 @@ public class DocumentController extends DatabaseServiceImplBase {
 			APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(doc.getVersion())
 					.setTs(doc.getTimestamp()).setData(data).build();
 			response.setE("SUCCESS").setV(apiResponseData);
+		} catch (DocumentException e) {
+			e.printStackTrace();
+
+			String message = "ERROR";
+
+			if (e.getType() == DocumentExceptionTypes.DOCUMENT_DOES_NOT_EXIST) {
+				message = "ERROR_NE";
+			}
+
+			if (e.getType() == DocumentExceptionTypes.DIFFERENT_DOCUMENT_VERSION) {
+				message = "ERROR_WV";
+
+				Document doc = this.documentService.get(key);
+				ByteString data = ByteString.copyFrom(doc.getData());
+
+				APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(doc.getVersion())
+						.setTs(doc.getTimestamp()).setData(data).build();
+
+				response.setV(apiResponseData);
+			}
+
+			response.setE(message);
+		}
+
+		responseObserver.onNext(response.build());
+		responseObserver.onCompleted();
+	}
+
+	@Override
+	public void testAndSet(TestAndSetRequest request, StreamObserver<APIResponse> responseObserver) {
+		BigInteger key = ProtoBigIntegerService.read(request.getK());
+		APIResponse.Builder response = APIResponse.newBuilder();
+
+		try {
+			long version = request.getVers();
+
+			SetAndTestData requestData = request.getV();
+			ByteString data = requestData.getD();
+			long timestamp = requestData.getTs();
+
+			this.documentService.testAndSet(key, version, data.toByteArray(), timestamp);
+
+			APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(version)
+					.setTs(timestamp).setData(data).build();
+
+			response.setV(apiResponseData).setE("SUCCESS");
 		} catch (DocumentException e) {
 			e.printStackTrace();
 

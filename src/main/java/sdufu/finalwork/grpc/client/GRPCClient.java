@@ -12,7 +12,9 @@ import sdufu.finalwork.proto.database.Database.APIResponse;
 import sdufu.finalwork.proto.database.Database.DelRequest;
 import sdufu.finalwork.proto.database.Database.GetRequest;
 import sdufu.finalwork.proto.database.Database.ProtoBigInteger;
+import sdufu.finalwork.proto.database.Database.SetAndTestData;
 import sdufu.finalwork.proto.database.Database.SetRequest;
+import sdufu.finalwork.proto.database.Database.TestAndSetRequest;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc.DatabaseServiceBlockingStub;
 
@@ -46,6 +48,9 @@ public class GRPCClient {
 				break;
 			case 4:
 				this.startDeleteByKeyAndVersionFlow(scanner, stub);
+				break;
+			case 5:
+				this.startTestAndSetFlow(scanner, stub);
 				break;
 			default:
 				break;
@@ -126,6 +131,29 @@ public class GRPCClient {
 		System.out.println(response);
 	}
 
+	private void startTestAndSetFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
+		System.out.println("Enter the document KEY:");
+		BigInteger key = scanner.nextBigInteger();
+		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
+
+		System.out.println("Enter the document VERSION:");
+		long version = scanner.nextLong();
+
+		System.out.println("Enter the document DATA");
+		String text = scanner.next();
+		ByteString data = ByteString.copyFrom(text.getBytes());
+
+		SetAndTestData setAndTestData = SetAndTestData.newBuilder().setD(data).setTs(System.currentTimeMillis())
+				.build();
+
+		TestAndSetRequest request = TestAndSetRequest.newBuilder().setVers(version).setK(transformedKey)
+				.setV(setAndTestData).build();
+		APIResponse response = stub.testAndSet(request);
+
+		System.out.println("TEST AND SET RESPONSE");
+		System.out.println(response);
+	}
+
 	/*
 	 * Method to show menu options
 	 */
@@ -136,6 +164,7 @@ public class GRPCClient {
 		System.out.println(this.getText("2", "to GET DOCUMENT"));
 		System.out.println(this.getText("3", "to DELETE DOCUMENT BY KEY"));
 		System.out.println(this.getText("4", "to DELETE DOCUMENT BY KEY AND VERSION"));
+		System.out.println(this.getText("5", "to TEST AND SET DOCUMENT"));
 	}
 
 	/*
