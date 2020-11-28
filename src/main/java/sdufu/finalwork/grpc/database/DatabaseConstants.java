@@ -1,5 +1,8 @@
 package sdufu.finalwork.grpc.database;
 
+/*
+ * Enum with database files path
+ */
 public enum DatabaseConstants {
 	PUT_STORAGE_DIR(System.getProperty("user.dir") + "/bd/sdufu/finalwork/tmp/storage"),
 	DELETE_STORAGE_DIR(System.getProperty("user.dir") + "/bd/sdufu/finalwork/tmp/delete"),

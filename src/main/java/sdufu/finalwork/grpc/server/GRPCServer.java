@@ -11,7 +11,13 @@ import sdufu.finalwork.grpc.database.DatabaseIO;
 import sdufu.finalwork.grpc.database.Repository;
 import sdufu.finalwork.grpc.service.DocumentService;
 
+/*
+ * Server class
+ */
 public class GRPCServer {
+	/*
+	 * Method to start server
+	 */
 	public void start(int port) throws IOException, InterruptedException {
 		System.out.println("Starting grpc server");
 

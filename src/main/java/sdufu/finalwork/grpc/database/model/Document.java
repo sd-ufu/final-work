@@ -2,6 +2,9 @@ package sdufu.finalwork.grpc.database.model;
 
 import java.io.Serializable;
 
+/*
+ * Class that represents the data to be saved
+ */
 public class Document implements Serializable {
 	private static final long serialVersionUID = 1L;
 

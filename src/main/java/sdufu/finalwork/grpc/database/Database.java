@@ -5,6 +5,9 @@ import java.util.Hashtable;
 
 import sdufu.finalwork.grpc.database.model.Document;
 
+/*
+ * Class to implement Hashtable
+ */
 public class Database extends Hashtable<BigInteger, Document> {
 	private static final long serialVersionUID = 1L;
 	private static BigInteger KEY = new BigInteger("1");

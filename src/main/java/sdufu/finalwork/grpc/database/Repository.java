@@ -5,6 +5,9 @@ import java.math.BigInteger;
 
 import sdufu.finalwork.grpc.database.model.Document;
 
+/*
+ * Class that communicates with the bank
+ */
 public class Repository {
 	private Database database;
 	private DatabaseIO databaseIO;
@@ -14,6 +17,9 @@ public class Repository {
 		this.databaseIO = databaseIO;
 	}
 
+	/*
+	 * Method to save or update new document
+	 */
 	public Document put(BigInteger key, Document value) {
 		Document response = this.database.put(key, value);
 
@@ -28,11 +34,17 @@ public class Repository {
 		return response;
 	}
 
+	/*
+	 * Method to get document
+	 */
 	public Document get(BigInteger key) {
 		System.out.println("DB: " + this.database);
 		return this.database.get(key);
 	}
 
+	/*
+	 * Method to remove document
+	 */
 	public Document remove(BigInteger key) {
 		Document response = this.database.remove(key);
 

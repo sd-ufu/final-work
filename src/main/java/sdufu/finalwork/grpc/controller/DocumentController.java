@@ -19,6 +19,9 @@ import sdufu.finalwork.proto.database.Database.SetRequest;
 import sdufu.finalwork.proto.database.Database.TestAndSetRequest;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc.DatabaseServiceImplBase;
 
+/*
+ * Class to implement GRPC interface
+ */
 public class DocumentController extends DatabaseServiceImplBase {
 	DocumentService documentService;
 

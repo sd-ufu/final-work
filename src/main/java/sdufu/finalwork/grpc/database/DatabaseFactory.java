@@ -2,6 +2,9 @@ package sdufu.finalwork.grpc.database;
 
 import java.io.IOException;
 
+/*
+ * Class to create new Database instance
+ */
 public class DatabaseFactory {
 	public static final Database build() {
 		try {
