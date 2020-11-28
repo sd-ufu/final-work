@@ -3,10 +3,14 @@ package sdufu.finalwork.grpc.server.exception;
 public class DocumentException extends Exception {
 	private static final long serialVersionUID = 1L;
 	
-	DocumentExceptionTypes message;
+	private DocumentExceptionTypes type;
 
-	public DocumentException(DocumentExceptionTypes message) {
-		super();
-		this.message = message;
+	public DocumentException(DocumentExceptionTypes type) {
+		super(type.value);
+		this.type = type;
+	}
+	
+	public DocumentExceptionTypes getType() {
+		return this.type;
 	}
 }

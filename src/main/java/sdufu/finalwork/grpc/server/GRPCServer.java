@@ -7,6 +7,7 @@ import io.grpc.ServerBuilder;
 import sdufu.finalwork.grpc.controller.DocumentController;
 import sdufu.finalwork.grpc.database.Database;
 import sdufu.finalwork.grpc.database.DatabaseFactory;
+import sdufu.finalwork.grpc.database.DatabaseIO;
 import sdufu.finalwork.grpc.database.Repository;
 import sdufu.finalwork.grpc.service.DocumentService;
 
@@ -15,8 +16,9 @@ public class GRPCServer {
 		System.out.println("Starting grpc server");
 
 		Database database = DatabaseFactory.build();
-		Repository repository = new Repository(database);
-		DocumentService documentService = new DocumentService(repository);
+		DatabaseIO databaseIO = new DatabaseIO();
+		Repository repository = new Repository(database, databaseIO);
+		DocumentService documentService = new DocumentService(repository, databaseIO);
 		DocumentController documentController = new DocumentController(documentService);
 
 		Server server = ServerBuilder.forPort(port).addService(documentController).build();

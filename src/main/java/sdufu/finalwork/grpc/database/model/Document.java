@@ -32,4 +32,10 @@ public class Document implements Serializable {
 	public void setData(byte[] data) {
 		this.data = data;
 	}
+	
+	@Override
+	public String toString() {
+		String data = new String(this.getData());
+		return "(VERSION: " + this.getVersion() + "; <> TIMESTAMP: " + this.getTimestamp() + "; <> DATA: " + data + ")\n";
+	}
 }

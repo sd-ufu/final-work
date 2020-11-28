@@ -9,13 +9,20 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import sdufu.finalwork.grpc.service.ProtoBigIntegerService;
 import sdufu.finalwork.proto.database.Database.APIResponse;
+import sdufu.finalwork.proto.database.Database.DelRequest;
 import sdufu.finalwork.proto.database.Database.GetRequest;
 import sdufu.finalwork.proto.database.Database.ProtoBigInteger;
 import sdufu.finalwork.proto.database.Database.SetRequest;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc.DatabaseServiceBlockingStub;
 
+/*
+ * Client server class
+ */
 public class GRPCClient {
+	/*
+	 * Method to start client server
+	 */
 	public void start(String host, int port) {
 		ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
 
@@ -23,7 +30,6 @@ public class GRPCClient {
 
 		this.showMenu();
 
-		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		Integer opr = scanner.nextInt();
 
@@ -35,14 +41,12 @@ public class GRPCClient {
 			case 2:
 				this.startGetFlow(scanner, stub);
 				break;
-//			case 3:
-//				System.out.println("Enter the product id");
-//				Integer id = scanner.nextInt();
-//				ProdId req = ProdId.newBuilder().setId(id).build();
-//				APIResponse responses = prodStub.deleteProduct(req);
-//				System.out.println("DELETE RESPONSE");
-//				System.out.println(responses);
-//				break;
+			case 3:
+				this.startDeleteByKeyFlow(scanner, stub);
+				break;
+			case 4:
+				this.startDeleteByKeyAndVersionFlow(scanner, stub);
+				break;
 			default:
 				break;
 			}
@@ -53,6 +57,9 @@ public class GRPCClient {
 		}
 	}
 
+	/*
+	 * Method to start flow to SET new document
+	 */
 	private void startSetFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
 		System.out.println("Enter the document KEY");
 		BigInteger key = scanner.nextBigInteger();
@@ -71,8 +78,11 @@ public class GRPCClient {
 		System.out.println(response);
 	}
 
+	/*
+	 * Method to start flow to GET new document
+	 */
 	private void startGetFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
-		System.out.println("Enter the product id");
+		System.out.println("Enter the document KEY:");
 		BigInteger key = scanner.nextBigInteger();
 		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
 
@@ -83,13 +93,54 @@ public class GRPCClient {
 		System.out.println(response);
 	}
 
+	/*
+	 * Method to start flow to DELETE document by key
+	 */
+	private void startDeleteByKeyFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
+		System.out.println("Enter the document KEY:");
+		BigInteger key = scanner.nextBigInteger();
+		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
+
+		DelRequest request = DelRequest.newBuilder().setK(transformedKey).build();
+		APIResponse response = stub.del(request);
+
+		System.out.println("DELETE BY KEY RESPONSE");
+		System.out.println(response);
+	}
+
+	/*
+	 * Method to start flow to DELETE document by key and version
+	 */
+	private void startDeleteByKeyAndVersionFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
+		System.out.println("Enter the document KEY:");
+		BigInteger key = scanner.nextBigInteger();
+		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
+
+		System.out.println("Enter the document VERSION:");
+		long version = scanner.nextLong();
+
+		DelRequest request = DelRequest.newBuilder().setK(transformedKey).setVers(version).build();
+		APIResponse response = stub.del(request);
+
+		System.out.println("DELETE BY KEY AND VERSION RESPONSE");
+		System.out.println(response);
+	}
+
+	/*
+	 * Method to show menu options
+	 */
 	private void showMenu() {
 		System.out.println("Enter the operation");
 		System.out.println(this.getText("0", "to STOP CLIENT"));
 		System.out.println(this.getText("1", "to SET DOCUMENT"));
 		System.out.println(this.getText("2", "to GET DOCUMENT"));
+		System.out.println(this.getText("3", "to DELETE DOCUMENT BY KEY"));
+		System.out.println(this.getText("4", "to DELETE DOCUMENT BY KEY AND VERSION"));
 	}
 
+	/*
+	 * Method to styling or menu
+	 */
 	private String getText(String opt, String text) {
 		final String BLUE = "\u001B[34m";
 		final String BOLD = "\033[0;1m";

@@ -5,12 +5,13 @@ import java.io.IOException;
 public class DatabaseFactory {
 	public static final Database build() {
 		try {
-			Database db = DatabaseIO.readDatabaseFile();
+			DatabaseIO databaseIO = new DatabaseIO();
+			Database db = databaseIO.readDatabaseFile();
 
 			if (db != null)
 				return db;
 			
-			DatabaseIO.createDatabaseFile();
+			databaseIO.createDatabaseFile();
 
 			return new Database();
 		} catch (IOException e) {
