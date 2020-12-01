@@ -17,11 +17,8 @@ public class SynchronizeDatabase implements Runnable {
 	public void run() {
 		try {
 			while (true) {
-				System.out.println("VOU SINCRONIZAR AGORA");
-				Thread.sleep(2000);
-				this.databaseIO.readDocumentOnTmpFiles(this.database);
-				System.out.println("SINCRONIZEI");
 				Thread.sleep(60000);
+				this.databaseIO.readDocumentOnTmpFiles(this.database);
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
