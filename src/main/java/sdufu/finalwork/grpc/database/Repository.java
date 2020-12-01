@@ -3,6 +3,7 @@ package sdufu.finalwork.grpc.database;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import sdufu.finalwork.grpc.database.io.DatabaseIO;
 import sdufu.finalwork.grpc.database.model.Document;
 
 /*
@@ -28,8 +29,6 @@ public class Repository {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		System.out.println("DB: " + this.database);
 
 		return response;
 	}
@@ -38,7 +37,6 @@ public class Repository {
 	 * Method to get document
 	 */
 	public Document get(BigInteger key) {
-		System.out.println("DB: " + this.database);
 		return this.database.get(key);
 	}
 
@@ -53,8 +51,6 @@ public class Repository {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		System.out.println("DB: " + this.database);
 
 		return response;
 	}

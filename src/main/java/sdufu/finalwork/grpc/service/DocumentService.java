@@ -3,8 +3,9 @@ package sdufu.finalwork.grpc.service;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import sdufu.finalwork.grpc.database.DatabaseIO;
 import sdufu.finalwork.grpc.database.Repository;
+import sdufu.finalwork.grpc.database.enums.DatabaseFilesConstants;
+import sdufu.finalwork.grpc.database.io.DatabaseIO;
 import sdufu.finalwork.grpc.database.model.Document;
 import sdufu.finalwork.grpc.server.exception.DocumentException;
 import sdufu.finalwork.grpc.server.exception.DocumentExceptionTypes;;
@@ -102,51 +103,28 @@ public class DocumentService {
 	 * Method to delete document
 	 */
 	private Document delete(BigInteger key, Document document) {
-		String fileName = null;
-
 		try {
-			fileName = this.databaseIO.saveDeleteDocument(key, document);
+			this.databaseIO.saveDocument(key, document, DatabaseFilesConstants.DEL);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		System.out.println("fileName: " + fileName);
 
-		Document response = this.repository.remove(key);
-
-		try {
-			if (fileName != null) {
-				this.databaseIO.deleteDocument(fileName);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return response;
+		return this.repository.remove(key);
 	}
 
 	/*
 	 * Method to save document
 	 */
 	private Document save(BigInteger key, Document doc) {
-		String fileName = null;
-
 		try {
-			fileName = this.databaseIO.saveStorageDocument(key, doc);
+			this.databaseIO.saveDocument(key, doc, DatabaseFilesConstants.ADD);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		Document response = this.repository.put(key, doc);
+		this.repository.put(key, doc);
 
-		try {
-			if (fileName != null) {
-				this.databaseIO.deleteStorageDocument(fileName);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return response;
+		return this.get(key);
 	}
 }

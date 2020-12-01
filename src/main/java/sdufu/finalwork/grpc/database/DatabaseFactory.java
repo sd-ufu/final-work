@@ -2,6 +2,8 @@ package sdufu.finalwork.grpc.database;
 
 import java.io.IOException;
 
+import sdufu.finalwork.grpc.database.io.DatabaseIO;
+
 /*
  * Class to create new Database instance
  */

@@ -131,10 +131,11 @@ public class DocumentController extends DatabaseServiceImplBase {
 			ByteString data = requestData.getD();
 			long timestamp = requestData.getTs();
 
-			this.documentService.testAndSet(key, version, data.toByteArray(), timestamp);
+			Document savedDoc = this.documentService.testAndSet(key, version, data.toByteArray(), timestamp);
+			ByteString savedData = ByteString.copyFrom(savedDoc.getData());
 
-			APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(version)
-					.setTs(timestamp).setData(data).build();
+			APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(savedDoc.getVersion())
+					.setTs(savedDoc.getTimestamp()).setData(savedData).build();
 
 			response.setV(apiResponseData).setE("SUCCESS");
 		} catch (DocumentException e) {
