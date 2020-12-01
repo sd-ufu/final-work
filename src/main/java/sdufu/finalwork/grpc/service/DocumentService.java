@@ -102,16 +102,22 @@ public class DocumentService {
 	 * Method to delete document
 	 */
 	private Document delete(BigInteger key, Document document) {
+		String fileName = null;
+
 		try {
-			this.databaseIO.saveDeleteDocument(key, document);
+			fileName = this.databaseIO.saveDeleteDocument(key, document);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+		System.out.println("fileName: " + fileName);
+
 		Document response = this.repository.remove(key);
 
 		try {
-			this.databaseIO.deleteStorageDocument(key);
+			if (fileName != null) {
+				this.databaseIO.deleteDocument(fileName);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -123,8 +129,10 @@ public class DocumentService {
 	 * Method to save document
 	 */
 	private Document save(BigInteger key, Document doc) {
+		String fileName = null;
+
 		try {
-			this.databaseIO.saveStorageDocument(key, doc);
+			fileName = this.databaseIO.saveStorageDocument(key, doc);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -132,7 +140,9 @@ public class DocumentService {
 		Document response = this.repository.put(key, doc);
 
 		try {
-			this.databaseIO.deleteStorageDocument(key);
+			if (fileName != null) {
+				this.databaseIO.deleteStorageDocument(fileName);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

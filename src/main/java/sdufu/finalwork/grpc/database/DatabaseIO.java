@@ -84,32 +84,38 @@ public class DatabaseIO {
 	/*
 	 * Method to save document on temporary storage file
 	 */
-	public void saveStorageDocument(BigInteger key, Document value) throws IOException {
+	public String saveStorageDocument(BigInteger key, Document value) throws IOException {
 		String path = this.getStorageDocumentPath(key);
 		this.saveDocument(path, value);
+
+		String[] pathSplited = path.split("/");
+		return pathSplited[pathSplited.length - 1];
 	}
 
 	/*
 	 * Method to save document on temporary storage file
 	 */
-	public void saveDeleteDocument(BigInteger key, Document value) throws IOException {
+	public String saveDeleteDocument(BigInteger key, Document value) throws IOException {
 		String path = this.getDeleteDocumentPath(key);
 		this.saveDocument(path, value);
+
+		String[] pathSplited = path.split("/");
+		return pathSplited[pathSplited.length - 1];
 	}
 
 	/*
 	 * Method to delete temporary files to save on table file
 	 */
-	public void deleteStorageDocument(BigInteger key) throws FileNotFoundException {
-		String path = this.getStorageDocumentPath(key);
+	public void deleteStorageDocument(String fileName) throws FileNotFoundException {
+		String path = DatabaseConstants.PUT_STORAGE_DIR.value + "/" + fileName;
 		this.deleteFile(path);
 	}
 
 	/*
 	 * Method to delete temporary files to delete on table file
 	 */
-	public void deleteDocument(BigInteger key) throws FileNotFoundException {
-		String path = this.getDeleteDocumentPath(key);
+	public void deleteDocument(String fileName) throws FileNotFoundException {
+		String path = DatabaseConstants.DELETE_STORAGE_DIR.value + "/" + fileName;
 		this.deleteFile(path);
 	}
 
@@ -207,7 +213,13 @@ public class DatabaseIO {
 			BigInteger key = new BigInteger(keyValue);
 
 			if (action.equals(DatabaseConstants.ADD_FILE_NAME.value)) {
-				db.put(key, doc);
+				Document doc2 = db.get(key);
+
+				if (doc2 == null) {
+					db.put(key, doc);
+				} else if (doc2.getVersion() == doc.getVersion()) {
+					db.put(key, doc);
+				}
 			}
 
 			if (action.equals(DatabaseConstants.DEL_FILE_NAME.value)) {
