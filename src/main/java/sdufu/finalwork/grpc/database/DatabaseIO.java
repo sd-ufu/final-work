@@ -1,5 +1,6 @@
 package sdufu.finalwork.grpc.database;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigInteger;
+import java.util.Arrays;
 
 import sdufu.finalwork.grpc.database.model.Document;
 
@@ -33,6 +35,16 @@ public class DatabaseIO {
 			Database db = (Database) objectInputStream.readObject();
 
 			this.readDocumentTmpFiles(db);
+
+			return db;
+		} catch (EOFException e) {
+			Database db = new Database();
+
+			try {
+				this.readDocumentTmpFiles(db);
+			} catch (ClassNotFoundException | IOException e1) {
+				e1.printStackTrace();
+			}
 
 			return db;
 		} catch (IOException e) {
@@ -129,56 +141,111 @@ public class DatabaseIO {
 	 * Method to return storage document path
 	 */
 	private String getStorageDocumentPath(BigInteger key) {
-		return DatabaseConstants.PUT_STORAGE_DIR.value + "/" + key.toString() + ".storage";
+		return DatabaseConstants.PUT_STORAGE_DIR.value + "/" + System.currentTimeMillis() + "_" + key.toString() + "_"
+				+ DatabaseConstants.ADD_FILE_NAME.value + ".storage";
 	}
 
 	/*
 	 * Method to return delete document path
 	 */
 	private String getDeleteDocumentPath(BigInteger key) {
-		return DatabaseConstants.DELETE_STORAGE_DIR.value + "/" + key.toString() + ".storage";
+		return DatabaseConstants.DELETE_STORAGE_DIR.value + "/" + System.currentTimeMillis() + "_" + key.toString()
+				+ "_" + DatabaseConstants.DEL_FILE_NAME.value + ".storage";
 	}
 
 	/*
 	 * Method to read temporary files to storage and save on table
 	 */
 	private void readDocumentTmpFiles(Database db) throws IOException, ClassNotFoundException {
-		String extension = ".storage";
-		File directory = new File(DatabaseConstants.PUT_STORAGE_DIR.value);
-		FilenameFilter filter = new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				String lowercaseName = name.toLowerCase();
-				return lowercaseName.endsWith(extension);
-			}
-		};
+		File[] putFilesList = this.getPutTmpFiles();
+		File[] deleteFilesList = this.getDeletetmpFiles();
+		File[] files = null;
+		boolean hasPutFilesList = putFilesList != null;
+		boolean hasDeleteFilesList = deleteFilesList != null;
 
-		File[] filesList = directory.listFiles(filter);
-		
-		if (filesList == null) {
+		if (!hasPutFilesList && !hasDeleteFilesList) {
 			return;
 		}
+
+		if (hasPutFilesList && hasDeleteFilesList) {
+			files = new File[putFilesList.length + deleteFilesList.length];
+			int count = 0;
+
+			for (int i = 0; i < putFilesList.length; i++) {
+				files[count] = putFilesList[i];
+				count++;
+			}
+
+			for (int i = 0; i < deleteFilesList.length; i++) {
+				files[count] = deleteFilesList[i];
+				count++;
+			}
+		}
+
+		if (hasPutFilesList && !hasDeleteFilesList) {
+			files = putFilesList;
+		}
+
+		if (!hasPutFilesList && hasDeleteFilesList) {
+			files = deleteFilesList;
+		}
+
+		Arrays.sort(files, new FilesComparator());
 
 		ObjectInputStream objectInputStream;
 		FileInputStream fileInputStream;
 
-		for (File file : filesList) {
+		for (File file : files) {
 			fileInputStream = new FileInputStream(file);
 			objectInputStream = new ObjectInputStream(fileInputStream);
+			String name = file.getName().replace(".storage", "");
+			String[] splitedName = name.split("_");
+			String keyValue = splitedName[1];
+			String action = splitedName[2];
 
 			Document doc = (Document) objectInputStream.readObject();
-			BigInteger key = new BigInteger(file.getName().replace(extension, ""));
-			db.put(key, doc);
+			BigInteger key = new BigInteger(keyValue);
+
+			if (action.equals(DatabaseConstants.ADD_FILE_NAME.value)) {
+				db.put(key, doc);
+			}
+
+			if (action.equals(DatabaseConstants.DEL_FILE_NAME.value)) {
+				db.remove(key);
+			}
 
 			fileInputStream.close();
 			objectInputStream.close();
 		}
 
-		if (filesList.length != 0) {
-			this.saveDatabase(db);
-		}
+		this.saveDatabase(db);
 
-		for (File file : filesList) {
+		for (File file : files) {
 			file.delete();
 		}
+	}
+
+	private File[] getPutTmpFiles() {
+		File directory = new File(DatabaseConstants.PUT_STORAGE_DIR.value);
+		FilenameFilter filter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				String lowercaseName = name.toLowerCase();
+				return lowercaseName.endsWith(".storage");
+			}
+		};
+
+		return directory.listFiles(filter);
+	}
+
+	private File[] getDeletetmpFiles() {
+		File directory = new File(DatabaseConstants.DELETE_STORAGE_DIR.value);
+		FilenameFilter filter = new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				String lowercaseName = name.toLowerCase();
+				return lowercaseName.endsWith(".storage");
+			}
+		};
+
+		return directory.listFiles(filter);
 	}
 }

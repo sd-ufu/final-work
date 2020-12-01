@@ -1,14 +1,18 @@
 package sdufu.finalwork.grpc.client;
 
 import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
 
 import com.google.protobuf.ByteString;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.stub.StreamObserver;
+import sdufu.finalwork.grpc.client.stream.ResponseStream;
 import sdufu.finalwork.grpc.service.ProtoBigIntegerService;
-import sdufu.finalwork.proto.database.Database.APIResponse;
+import sdufu.finalwork.proto.database.Database;
 import sdufu.finalwork.proto.database.Database.DelRequest;
 import sdufu.finalwork.proto.database.Database.GetRequest;
 import sdufu.finalwork.proto.database.Database.ProtoBigInteger;
@@ -16,7 +20,7 @@ import sdufu.finalwork.proto.database.Database.SetAndTestData;
 import sdufu.finalwork.proto.database.Database.SetRequest;
 import sdufu.finalwork.proto.database.Database.TestAndSetRequest;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc;
-import sdufu.finalwork.proto.database.DatabaseServiceGrpc.DatabaseServiceBlockingStub;
+import sdufu.finalwork.proto.database.DatabaseServiceGrpc.DatabaseServiceStub;
 
 /*
  * Client server class
@@ -28,7 +32,7 @@ public class GRPCClient {
 	public void start(String host, int port) {
 		ManagedChannel channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
 
-		DatabaseServiceBlockingStub stub = DatabaseServiceGrpc.newBlockingStub(channel);
+		DatabaseServiceStub stub = DatabaseServiceGrpc.newStub(channel);
 
 		this.showMenu();
 
@@ -56,7 +60,7 @@ public class GRPCClient {
 				break;
 			}
 
-			System.out.println("");
+			System.out.println();
 			this.showMenu();
 			opr = scanner.nextInt();
 		}
@@ -65,7 +69,7 @@ public class GRPCClient {
 	/*
 	 * Method to start flow to SET new document
 	 */
-	private void startSetFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
+	private void startSetFlow(Scanner scanner, DatabaseServiceStub stub) {
 		System.out.println("Enter the document KEY");
 		BigInteger key = scanner.nextBigInteger();
 		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
@@ -77,46 +81,50 @@ public class GRPCClient {
 
 		SetRequest request = SetRequest.newBuilder().setTs(System.currentTimeMillis()).setK(transformedKey).setD(data)
 				.build();
-		APIResponse response = stub.set(request);
 
-		System.out.println("SET RESPONSE");
-		System.out.println(response);
+		Date date = Calendar.getInstance().getTime();
+		StreamObserver<Database.APIResponse> observer = ResponseStream.build(date, key, "SET");
+
+		System.out.println("REQUEST DATE: " + date);
+		stub.set(request, observer);
 	}
 
 	/*
 	 * Method to start flow to GET new document
 	 */
-	private void startGetFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
+	private void startGetFlow(Scanner scanner, DatabaseServiceStub stub) {
 		System.out.println("Enter the document KEY:");
 		BigInteger key = scanner.nextBigInteger();
 		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
 
 		GetRequest request = GetRequest.newBuilder().setK(transformedKey).build();
-		APIResponse response = stub.get(request);
 
-		System.out.println("GET RESPONSE");
-		System.out.println(response);
+		Date date = Calendar.getInstance().getTime();
+		StreamObserver<Database.APIResponse> observer = ResponseStream.build(date, key, "GET");
+
+		stub.get(request, observer);
 	}
 
 	/*
 	 * Method to start flow to DELETE document by key
 	 */
-	private void startDeleteByKeyFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
+	private void startDeleteByKeyFlow(Scanner scanner, DatabaseServiceStub stub) {
 		System.out.println("Enter the document KEY:");
 		BigInteger key = scanner.nextBigInteger();
 		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
 
 		DelRequest request = DelRequest.newBuilder().setK(transformedKey).build();
-		APIResponse response = stub.del(request);
 
-		System.out.println("DELETE BY KEY RESPONSE");
-		System.out.println(response);
+		Date date = Calendar.getInstance().getTime();
+		StreamObserver<Database.APIResponse> observer = ResponseStream.build(date, key, "DEL");
+
+		stub.del(request, observer);
 	}
 
 	/*
 	 * Method to start flow to DELETE document by key and version
 	 */
-	private void startDeleteByKeyAndVersionFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
+	private void startDeleteByKeyAndVersionFlow(Scanner scanner, DatabaseServiceStub stub) {
 		System.out.println("Enter the document KEY:");
 		BigInteger key = scanner.nextBigInteger();
 		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
@@ -125,13 +133,17 @@ public class GRPCClient {
 		long version = scanner.nextLong();
 
 		DelRequest request = DelRequest.newBuilder().setK(transformedKey).setVers(version).build();
-		APIResponse response = stub.del(request);
 
-		System.out.println("DELETE BY KEY AND VERSION RESPONSE");
-		System.out.println(response);
+		Date date = Calendar.getInstance().getTime();
+		StreamObserver<Database.APIResponse> observer = ResponseStream.build(date, key, "DEL BY KEY AND VERSION");
+
+		stub.del(request, observer);
 	}
 
-	private void startTestAndSetFlow(Scanner scanner, DatabaseServiceBlockingStub stub) {
+	/*
+	 * Method to start flow to TEST AND SET document by key and version
+	 */
+	private void startTestAndSetFlow(Scanner scanner, DatabaseServiceStub stub) {
 		System.out.println("Enter the document KEY:");
 		BigInteger key = scanner.nextBigInteger();
 		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
@@ -148,10 +160,11 @@ public class GRPCClient {
 
 		TestAndSetRequest request = TestAndSetRequest.newBuilder().setVers(version).setK(transformedKey)
 				.setV(setAndTestData).build();
-		APIResponse response = stub.testAndSet(request);
 
-		System.out.println("TEST AND SET RESPONSE");
-		System.out.println(response);
+		Date date = Calendar.getInstance().getTime();
+		StreamObserver<Database.APIResponse> observer = ResponseStream.build(date, key, "TEST AND SET");
+
+		stub.testAndSet(request, observer);
 	}
 
 	/*
