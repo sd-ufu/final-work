@@ -25,7 +25,7 @@ public class DocumentService {
 	/*
 	 * Method to save document on database
 	 */
-	public Document set(BigInteger key, byte[] data, long timestamp) throws DocumentException {
+	public synchronized Document set(BigInteger key, byte[] data, long timestamp) throws DocumentException {
 		Document docInDatabase = this.repository.get(key);
 
 		if (docInDatabase != null) {
@@ -50,7 +50,7 @@ public class DocumentService {
 	/*
 	 * Method to delete document on database by key
 	 */
-	public Document del(BigInteger key) throws DocumentException {
+	public synchronized Document del(BigInteger key) throws DocumentException {
 		Document document = this.get(key);
 
 		if (document == null) {
@@ -63,7 +63,7 @@ public class DocumentService {
 	/*
 	 * Method to delete document on database by key and version
 	 */
-	public Document del(BigInteger key, long version) throws DocumentException {
+	public synchronized Document del(BigInteger key, long version) throws DocumentException {
 		Document document = this.get(key);
 
 		if (document == null) {
@@ -80,7 +80,7 @@ public class DocumentService {
 	/*
 	 * Method to test update document
 	 */
-	public Document testAndSet(BigInteger key, long version, byte[] data, long timestamp) throws DocumentException {
+	public synchronized Document testAndSet(BigInteger key, long version, byte[] data, long timestamp) throws DocumentException {
 		Document docInDataBase = this.get(key);
 
 		if (docInDataBase == null) {
