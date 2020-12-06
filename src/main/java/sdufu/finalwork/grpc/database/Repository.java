@@ -1,9 +1,7 @@
 package sdufu.finalwork.grpc.database;
 
-import java.io.IOException;
 import java.math.BigInteger;
 
-import sdufu.finalwork.grpc.database.io.DatabaseIO;
 import sdufu.finalwork.grpc.database.model.Document;
 
 /*
@@ -11,26 +9,16 @@ import sdufu.finalwork.grpc.database.model.Document;
  */
 public class Repository {
 	private Database database;
-	private DatabaseIO databaseIO;
 
-	public Repository(Database database, DatabaseIO databaseIO) {
+	public Repository(Database database) {
 		this.database = database;
-		this.databaseIO = databaseIO;
 	}
 
 	/*
 	 * Method to save or update new document
 	 */
 	public Document put(BigInteger key, Document value) {
-		Document response = this.database.put(key, value);
-
-		try {
-			this.databaseIO.saveDatabase(this.database);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return response;
+		return this.database.put(key, value);
 	}
 
 	/*
@@ -44,14 +32,6 @@ public class Repository {
 	 * Method to remove document
 	 */
 	public Document remove(BigInteger key) {
-		Document response = this.database.remove(key);
-
-		try {
-			this.databaseIO.saveDatabase(this.database);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return response;
+		return this.database.remove(key);
 	}
 }

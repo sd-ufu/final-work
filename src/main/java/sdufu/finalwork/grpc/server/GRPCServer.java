@@ -24,7 +24,7 @@ public class GRPCServer {
 
 		Database database = DatabaseFactory.build();
 		DatabaseIO databaseIO = new DatabaseIO();
-		Repository repository = new Repository(database, databaseIO);
+		Repository repository = new Repository(database);
 		DocumentService documentService = new DocumentService(repository, databaseIO);
 		DocumentController documentController = new DocumentController(documentService);
 		
