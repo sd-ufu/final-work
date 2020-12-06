@@ -1,7 +1,7 @@
 package sdufu.finalwork.main;
 
 import sdufu.finalwork.grpc.client.GRPCClient;
-import sdufu.finalwork.grpc.client.GRPCClientWithFileBlocking;
+import sdufu.finalwork.grpc.client.GRPCClientWithFile;
 
 /*
  * Class to start client server
@@ -21,7 +21,7 @@ public class Client {
 		if (scope.equals("TERMINAL")) {
 			client = new GRPCClient();
 		} else {
-			client = new GRPCClientWithFileBlocking();
+			client = new GRPCClientWithFile();
 		}
 
 		client.start("localhost", 9089);

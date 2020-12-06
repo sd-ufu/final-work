@@ -39,6 +39,8 @@ public class DocumentController extends DatabaseServiceImplBase {
 			long timestamp = request.getTs();
 
 			this.documentService.set(key, data.toByteArray(), timestamp);
+			
+			response.setE("SUCCESS");
 		} catch (DocumentException e) {
 			e.printStackTrace();
 

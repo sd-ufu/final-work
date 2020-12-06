@@ -27,10 +27,12 @@ public class GRPCServer {
 		Repository repository = new Repository(database, databaseIO);
 		DocumentService documentService = new DocumentService(repository, databaseIO);
 		DocumentController documentController = new DocumentController(documentService);
+		
+		System.out.println(database);
 
 		Server server = ServerBuilder.forPort(port).addService(documentController).build();
 		server.start();
-		
+
 		SynchronizeDatabase synchronizeDatabase = new SynchronizeDatabase(database, databaseIO);
 		Thread syncDb = new Thread(synchronizeDatabase);
 

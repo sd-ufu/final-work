@@ -20,7 +20,7 @@ public abstract class Client {
 	/*
 	 * Method to start flow to SET new document
 	 */
-	public void startSetFlow(String keyString, String text, DatabaseServiceBlockingStub stub) {
+	public APIResponse startSetFlow(String keyString, String text, DatabaseServiceBlockingStub stub) {
 		BigInteger key = new BigInteger(keyString);
 		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
 
@@ -29,49 +29,37 @@ public abstract class Client {
 		SetRequest request = SetRequest.newBuilder().setTs(System.currentTimeMillis()).setK(transformedKey).setD(data)
 				.build();
 
-		long date = System.currentTimeMillis();
-
-		System.out.println("SET REQUEST DATE: " + date);
-		APIResponse response = stub.set(request);
-		System.out.println("SET RESPONSE DATE: " + date + " => " + response);
+		return stub.set(request);
 	}
 
 	/*
 	 * Method to start flow to GET new document
 	 */
-	public void startGetFlow(String keyString, DatabaseServiceBlockingStub stub) {
+	public APIResponse startGetFlow(String keyString, DatabaseServiceBlockingStub stub) {
 		BigInteger key = new BigInteger(keyString);
 		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
 
 		GetRequest request = GetRequest.newBuilder().setK(transformedKey).build();
 
-		long date = System.currentTimeMillis();
-
-		System.out.println("GET REQUEST DATE: " + date);
-		APIResponse response = stub.get(request);
-		System.out.println("GET RESPONSE DATE: " + date + " => " + response);
+		return stub.get(request);
 	}
 
 	/*
 	 * Method to start flow to DELETE document by key
 	 */
-	public void startDeleteByKeyFlow(String keyString, DatabaseServiceBlockingStub stub) {
+	public APIResponse startDeleteByKeyFlow(String keyString, DatabaseServiceBlockingStub stub) {
 		BigInteger key = new BigInteger(keyString);
 		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
 
 		DelRequest request = DelRequest.newBuilder().setK(transformedKey).build();
 
-		long date = System.currentTimeMillis();
-
-		System.out.println("DEL REQUEST DATE: " + date);
-		APIResponse response = stub.del(request);
-		System.out.println("DEL RESPONSE DATE: " + date + " => " + response);
+		return stub.del(request);
 	}
 
 	/*
 	 * Method to start flow to DELETE document by key and version
 	 */
-	public void startDeleteByKeyAndVersionFlow(String keyString, String versionString,
+	public APIResponse startDeleteByKeyAndVersionFlow(String keyString, String versionString,
 			DatabaseServiceBlockingStub stub) {
 		BigInteger key = new BigInteger(keyString);
 		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
@@ -80,17 +68,13 @@ public abstract class Client {
 
 		DelRequest request = DelRequest.newBuilder().setK(transformedKey).setVers(version).build();
 
-		long date = System.currentTimeMillis();
-
-		System.out.println("DEL BY KEY AND VERSION REQUEST DATE: " + date);
-		APIResponse response = stub.del(request);
-		System.out.println("DEL BY KEY AND VERSION RESPONSE DATE: " + date + " => " + response);
+		return stub.del(request);
 	}
 
 	/*
 	 * Method to start flow to TEST AND SET document by key and version
 	 */
-	public void startTestAndSetFlow(String keyString, String versionString, String text,
+	public APIResponse startTestAndSetFlow(String keyString, String versionString, String text,
 			DatabaseServiceBlockingStub stub) {
 		BigInteger key = new BigInteger(keyString);
 		ProtoBigInteger transformedKey = ProtoBigIntegerService.write(key);
@@ -105,11 +89,7 @@ public abstract class Client {
 		TestAndSetRequest request = TestAndSetRequest.newBuilder().setVers(version).setK(transformedKey)
 				.setV(setAndTestData).build();
 
-		long date = System.currentTimeMillis();
-
-		System.out.println("TEST AND SET REQUEST DATE: " + date);
-		APIResponse response = stub.testAndSet(request);
-		System.out.println("TEST AND SET RESPONSE DATE: " + date + " => " + response);
+		return stub.testAndSet(request);
 	}
 
 	/*
