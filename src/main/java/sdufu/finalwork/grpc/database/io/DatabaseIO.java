@@ -85,8 +85,7 @@ public class DatabaseIO {
 	}
 
 	/*
-	 * Method to save document on temporary storage file
-	 * return file name
+	 * Method to save document on temporary storage file return file name
 	 */
 	public String saveDocument(BigInteger key, Document value, DatabaseFilesConstants fileType) throws IOException {
 		String path = this.getStorageDocumentPath(key, fileType);
@@ -125,7 +124,6 @@ public class DatabaseIO {
 		if (files == null) {
 			return;
 		}
-
 
 		Arrays.sort(files, new FilesComparator());
 
@@ -168,7 +166,6 @@ public class DatabaseIO {
 			file.delete();
 		}
 	}
-
 
 	/*
 	 * Method to return storage document path

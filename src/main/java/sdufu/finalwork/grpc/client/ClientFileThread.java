@@ -67,7 +67,10 @@ public class ClientFileThread implements Runnable {
 			}
 
 			String fileRespPath = System.getProperty("user.dir") + "/files/output/" + this.file.getName() + "_RESP.txt";
-			FileWriter fileWriter = new FileWriter(fileRespPath);
+			File out = new File(fileRespPath);
+			out.getParentFile().mkdirs();
+
+			FileWriter fileWriter = new FileWriter(out);
 			fileWriter.write(resp);
 			fileWriter.close();
 
