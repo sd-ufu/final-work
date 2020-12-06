@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import sdufu.finalwork.proto.database.Database.APIResponse;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc;
 import sdufu.finalwork.proto.database.DatabaseServiceGrpc.DatabaseServiceBlockingStub;
 
@@ -59,21 +60,24 @@ public class GRPCClient extends Client {
 		System.out.println("Enter the document DATA");
 		String text = scanner.next();
 
-		super.startSetFlow(key.toString(), text, stub);
+		APIResponse response = super.startSetFlow(key.toString(), text, stub);
+		System.out.println("SET RESPONSE = " + response);
 	}
 
 	private void get(Scanner scanner, DatabaseServiceBlockingStub stub) {
 		System.out.println("Enter the document KEY");
 		BigInteger key = scanner.nextBigInteger();
 
-		super.startGetFlow(key.toString(), stub);
+		APIResponse response = super.startGetFlow(key.toString(), stub);
+		System.out.println("GET RESPONSE = " + response);
 	}
 
 	private void deleteByKey(Scanner scanner, DatabaseServiceBlockingStub stub) {
 		System.out.println("Enter the document KEY");
 		BigInteger key = scanner.nextBigInteger();
 
-		super.startDeleteByKeyFlow(key.toString(), stub);
+		APIResponse response = super.startDeleteByKeyFlow(key.toString(), stub);
+		System.out.println("DELETE RESPONSE = " + response);
 	}
 
 	private void deleteByKeyAndVersion(Scanner scanner, DatabaseServiceBlockingStub stub) {
@@ -83,7 +87,8 @@ public class GRPCClient extends Client {
 		System.out.println("Enter the document VERSION:");
 		long version = scanner.nextLong();
 
-		super.startDeleteByKeyAndVersionFlow(key.toString(), Long.toString(version), stub);
+		APIResponse response = super.startDeleteByKeyAndVersionFlow(key.toString(), Long.toString(version), stub);
+		System.out.println("DELETE BY KEY AND VERSION RESPONSE = " + response);
 	}
 
 	private void testAndSet(Scanner scanner, DatabaseServiceBlockingStub stub) {
@@ -96,6 +101,7 @@ public class GRPCClient extends Client {
 		System.out.println("Enter the document DATA");
 		String text = scanner.next();
 
-		super.startTestAndSetFlow(key.toString(), Long.toString(version), text, stub);
+		APIResponse response = super.startTestAndSetFlow(key.toString(), Long.toString(version), text, stub);
+		System.out.println("TEST AND SET RESPONSE = " + response);
 	}
 }

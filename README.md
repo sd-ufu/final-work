@@ -1,17 +1,55 @@
-# final-work
+ETAPAS PARA COMPILAR E RODAR O PROJETO
+---------
 
-1) Download mvn [here](https://maven.apache.org/download.cgi).
+1) Baixar mvn [here](https://maven.apache.org/download.cgi).
 
-2) Install mvn [here](https://maven.apache.org/install).
+2) Instalar mvn [here](https://maven.apache.org/install).
 
-3) Go to project root.
+3) Abra a pasta do projeto.
 
-4) Run command to transform **proto files** in **java files**: `mvn clean generate-sources`.
+4) Execute este comando para transformar os **proto files** em **java files**: `mvn clean generate-sources`.
 
-5) Run command to generate server jar file: `mvn -P server install`.
+5) Execute este comando para gerar o **.jar** para rodar o servidor: `mvn -P server install`.
 
-6) Run command to generate cliet jar file: `mvn -P client install`.
+6) Execute este comando para gerar o **.jar** para rodar o cliente: `mvn -P client install`.
 
-7) Run command to start server: `java -jar target/finalwork-server.jar`.
+7) Execute este comando para iniciar o servidor: `java -jar target/finalwork-server.jar`.
 
-8) Run command to start client: `java -jar target/finalwork-client.jar`.
+8) Execute este comando para iniciar o cliente e executar ele lendo os arquivos na pastsa **files/input**: `SCOPE=FILE java -jar target/finalwork-client.jar`.
+
+8) Execute este comando para iniciar o cliente e executar a interface de terminal: `SCOPE=TERMINAL java -jar target/finalwork-client.jar`.
+
+
+FORMATOS PARA OS ARQUIVOS DE ENTRADAS
+---------
+**SET** => `1 {{K}} {{D}}`
+* Exemplo: Quero inserir na chave `20` o valor `NOME` => `1 20 NOME`
+
+**GET** => `2 {{K}}`
+* Exemplo: Quero ver o valor da chave `20` => `2 20`
+
+**DEL** => `3 {{K}}`
+* Exemplo: Quero apagar a chave `20` => `3 20`
+
+**DEL BY KEY AND VERSION** => `4 {{K}} {{VERS}}`
+* Exemplo: Quero apagar a chave `20` com a versão `10` => `4 20 10`
+
+**TEST AND SET** => `5 {{K}} {{VERS}} {{D}}`
+* Exemplo: Quero atualizar a chave `20` com a versão `10` => `5 20 10 NEW_DATA_20`
+
+
+INTEGRANTES
+---------
+Nome: Ivan Guimarães Monte
+
+Matrícula: 11521BSI210
+
+
+Nome: Paulo Victor da Silva Oliveira
+
+Matrícula: 11521bsi219
+
+
+Nome: Ricardo Pereira
+
+Matrícula: 11521BSI220
