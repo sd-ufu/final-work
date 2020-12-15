@@ -15,11 +15,11 @@ ETAPAS PARA COMPILAR E RODAR O PROJETO
 
 6) Execute este comando para gerar o **.jar** para rodar o cliente: `mvn -P client install`.
 
-7) Execute este comando para iniciar o servidor: `java -jar target/finalwork-server.jar`.
+7) Execute este comando para iniciar o servidor: `java -jar target/finalwork-server.jar 9089`.
 
-8) Execute este comando para iniciar o cliente e executar ele lendo os arquivos na pastsa **files/input**: `SCOPE=FILE java -jar target/finalwork-client.jar`.
+8) Execute este comando para iniciar o cliente e executar ele lendo os arquivos na pastsa **files/input**: `SCOPE=FILE java -jar target/finalwork-client.jar localhost 9089`.
 
-8) Execute este comando para iniciar o cliente e executar a interface de terminal: `SCOPE=TERMINAL java -jar target/finalwork-client.jar`.
+8) Execute este comando para iniciar o cliente e executar a interface de terminal: `SCOPE=TERMINAL java -jar target/finalwork-client.jar localhost 9089`.
 
 
 FORMATOS PARA OS ARQUIVOS DE ENTRADAS

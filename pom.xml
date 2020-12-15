@@ -11,22 +11,22 @@
 	<name>finalwork</name>
 
 	<profiles>
-    <profile>
-      <id>client</id>
-      <properties>
-        <jar.name>client</jar.name>
-        <file.path>sdufu.finalwork.main.Client</file.path>
-      </properties>
-    </profile>
+		<profile>
+			<id>client</id>
+			<properties>
+				<jar.name>client</jar.name>
+				<file.path>sdufu.finalwork.main.Client</file.path>
+			</properties>
+		</profile>
 
-    <profile>
-      <id>server</id>
-      <properties>
-        <jar.name>server</jar.name>
-        <file.path>sdufu.finalwork.main.Server</file.path>
-      </properties>
-    </profile>
-  </profiles>
+		<profile>
+			<id>server</id>
+			<properties>
+				<jar.name>server</jar.name>
+				<file.path>sdufu.finalwork.main.Server</file.path>
+			</properties>
+		</profile>
+	</profiles>
 
 	<build>
 		<defaultGoal>clean generate-sources compile install</defaultGoal>
@@ -58,7 +58,7 @@
 					</archive>
 				</configuration>
 			</plugin>
-			
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -137,6 +137,50 @@
 	</dependencyManagement>
 
 	<dependencies>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.ratis</groupId>
+			<artifactId>ratis-server</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.ratis</groupId>
+			<artifactId>ratis-netty</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.ratis</groupId>
+			<artifactId>ratis-grpc</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.78</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.25</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet-core</artifactId>

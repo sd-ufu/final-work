@@ -12,7 +12,10 @@ public class Client {
 	 */
 	public static void main(String[] args) {
 		sdufu.finalwork.grpc.client.Client client = null;
+
 		String scope = System.getenv("SCOPE");
+		String host = args[0];
+		int port = Integer.parseInt(args[1]);
 
 		if (scope == null) {
 			scope = "TERMINAL";
@@ -24,6 +27,6 @@ public class Client {
 			client = new GRPCClientWithFile();
 		}
 
-		client.start("localhost", 9089);
+		client.start(host, port);
 	}
 }

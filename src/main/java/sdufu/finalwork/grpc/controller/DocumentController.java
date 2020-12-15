@@ -39,18 +39,22 @@ public class DocumentController extends DatabaseServiceImplBase {
 			long timestamp = request.getTs();
 
 			this.documentService.set(key, data.toByteArray(), timestamp);
-			
+
 			response.setE("SUCCESS");
 		} catch (DocumentException e) {
 			e.printStackTrace();
 
-			Document doc = this.documentService.get(key);
-			ByteString data = ByteString.copyFrom(doc.getData());
+			try {
+				Document doc = this.documentService.get(key);
+				ByteString data = ByteString.copyFrom(doc.getData());
 
-			APIResponseData apiResponseData = APIResponseData.newBuilder().setTs(doc.getTimestamp())
-					.setVer(doc.getVersion()).setData(data).build();
+				APIResponseData apiResponseData = APIResponseData.newBuilder().setTs(doc.getTimestamp())
+						.setVer(doc.getVersion()).setData(data).build();
 
-			response.setE("ERROR").setV(apiResponseData);
+				response.setE("ERROR").setV(apiResponseData);
+			} catch (DocumentException e1) {
+				e1.printStackTrace();
+			}
 		}
 
 		responseObserver.onNext(response.build());
@@ -60,17 +64,23 @@ public class DocumentController extends DatabaseServiceImplBase {
 	@Override
 	public void get(GetRequest request, StreamObserver<APIResponse> responseObserver) {
 		BigInteger key = ProtoBigIntegerService.read(request.getK());
-		Document document = this.documentService.get(key);
-
 		APIResponse.Builder response = APIResponse.newBuilder();
 
-		if (document != null) {
+		try {
+			Document document = this.documentService.get(key);
+			
+			if (document == null) {
+				throw new DocumentException(DocumentExceptionTypes.DOCUMENT_DOES_NOT_EXIST);
+			}
+
 			ByteString data = ByteString.copyFrom(document.getData());
 			APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(document.getVersion())
 					.setTs(document.getTimestamp()).setData(data).build();
 
 			response.setE("SUCCESS").setV(apiResponseData);
-		} else {
+		} catch (DocumentException e) {
+			e.printStackTrace();
+
 			response.setE("ERROR");
 		}
 
@@ -86,6 +96,10 @@ public class DocumentController extends DatabaseServiceImplBase {
 		try {
 			long version = request.getVers();
 			Document doc = version != 0 ? this.documentService.del(key, version) : this.documentService.del(key);
+
+			if (doc == null) {
+				throw new DocumentException(DocumentExceptionTypes.DOCUMENT_DOES_NOT_EXIST);
+			}
 
 			ByteString data = ByteString.copyFrom(doc.getData());
 			APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(doc.getVersion())
@@ -103,13 +117,18 @@ public class DocumentController extends DatabaseServiceImplBase {
 			if (e.getType() == DocumentExceptionTypes.DIFFERENT_DOCUMENT_VERSION) {
 				message = "ERROR_WV";
 
-				Document doc = this.documentService.get(key);
-				ByteString data = ByteString.copyFrom(doc.getData());
+				try {
+					Document doc = this.documentService.get(key);
 
-				APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(doc.getVersion())
-						.setTs(doc.getTimestamp()).setData(data).build();
+					ByteString data = ByteString.copyFrom(doc.getData());
 
-				response.setV(apiResponseData);
+					APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(doc.getVersion())
+							.setTs(doc.getTimestamp()).setData(data).build();
+
+					response.setV(apiResponseData);
+				} catch (DocumentException e1) {
+					e1.printStackTrace();
+				}
 			}
 
 			response.setE(message);
@@ -150,13 +169,18 @@ public class DocumentController extends DatabaseServiceImplBase {
 			if (e.getType() == DocumentExceptionTypes.DIFFERENT_DOCUMENT_VERSION) {
 				message = "ERROR_WV";
 
-				Document doc = this.documentService.get(key);
-				ByteString data = ByteString.copyFrom(doc.getData());
+				try {
+					Document doc = this.documentService.get(key);
 
-				APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(doc.getVersion())
-						.setTs(doc.getTimestamp()).setData(data).build();
+					ByteString data = ByteString.copyFrom(doc.getData());
 
-				response.setV(apiResponseData);
+					APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(doc.getVersion())
+							.setTs(doc.getTimestamp()).setData(data).build();
+
+					response.setV(apiResponseData);
+				} catch (DocumentException e1) {
+					e1.printStackTrace();
+				}
 			}
 
 			response.setE(message);

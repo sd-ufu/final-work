@@ -8,7 +8,7 @@ import sdufu.finalwork.grpc.database.model.Document;
  * Class that communicates with the bank
  */
 public class Repository {
-	private Database database;
+	public Database database;
 
 	public Repository(Database database) {
 		this.database = database;
