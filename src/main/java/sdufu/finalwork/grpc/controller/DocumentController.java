@@ -44,17 +44,13 @@ public class DocumentController extends DatabaseServiceImplBase {
 		} catch (DocumentException e) {
 			e.printStackTrace();
 
-			try {
-				Document doc = this.documentService.get(key);
-				ByteString data = ByteString.copyFrom(doc.getData());
+			Document doc = this.documentService.get(key);
+			ByteString data = ByteString.copyFrom(doc.getData());
 
-				APIResponseData apiResponseData = APIResponseData.newBuilder().setTs(doc.getTimestamp())
-						.setVer(doc.getVersion()).setData(data).build();
+			APIResponseData apiResponseData = APIResponseData.newBuilder().setTs(doc.getTimestamp())
+					.setVer(doc.getVersion()).setData(data).build();
 
-				response.setE("ERROR").setV(apiResponseData);
-			} catch (DocumentException e1) {
-				e1.printStackTrace();
-			}
+			response.setE("ERROR").setV(apiResponseData);
 		}
 
 		responseObserver.onNext(response.build());
@@ -68,7 +64,7 @@ public class DocumentController extends DatabaseServiceImplBase {
 
 		try {
 			Document document = this.documentService.get(key);
-			
+
 			if (document == null) {
 				throw new DocumentException(DocumentExceptionTypes.DOCUMENT_DOES_NOT_EXIST);
 			}
@@ -117,18 +113,14 @@ public class DocumentController extends DatabaseServiceImplBase {
 			if (e.getType() == DocumentExceptionTypes.DIFFERENT_DOCUMENT_VERSION) {
 				message = "ERROR_WV";
 
-				try {
-					Document doc = this.documentService.get(key);
+				Document doc = this.documentService.get(key);
 
-					ByteString data = ByteString.copyFrom(doc.getData());
+				ByteString data = ByteString.copyFrom(doc.getData());
 
-					APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(doc.getVersion())
-							.setTs(doc.getTimestamp()).setData(data).build();
+				APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(doc.getVersion())
+						.setTs(doc.getTimestamp()).setData(data).build();
 
-					response.setV(apiResponseData);
-				} catch (DocumentException e1) {
-					e1.printStackTrace();
-				}
+				response.setV(apiResponseData);
 			}
 
 			response.setE(message);
@@ -169,18 +161,14 @@ public class DocumentController extends DatabaseServiceImplBase {
 			if (e.getType() == DocumentExceptionTypes.DIFFERENT_DOCUMENT_VERSION) {
 				message = "ERROR_WV";
 
-				try {
-					Document doc = this.documentService.get(key);
+				Document doc = this.documentService.get(key);
 
-					ByteString data = ByteString.copyFrom(doc.getData());
+				ByteString data = ByteString.copyFrom(doc.getData());
 
-					APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(doc.getVersion())
-							.setTs(doc.getTimestamp()).setData(data).build();
+				APIResponseData apiResponseData = APIResponseData.newBuilder().setVer(doc.getVersion())
+						.setTs(doc.getTimestamp()).setData(data).build();
 
-					response.setV(apiResponseData);
-				} catch (DocumentException e1) {
-					e1.printStackTrace();
-				}
+				response.setV(apiResponseData);
 			}
 
 			response.setE(message);

@@ -57,14 +57,12 @@ public class Client {
 			RaftClientReply getValue = client.sendReadOnly(Message.valueOf(request));
 			byte[] b = getValue.getMessage().getContent().toByteArray();
 			Response response = SerializationUtils.deserialize(b);
-			System.out.println("Resposta_GET:" + response);
 
 			return response;
 		} else {
 			RaftClientReply getValue = client.send(Message.valueOf(request));
 			byte[] b = getValue.getMessage().getContent().toByteArray();
 			Response response = SerializationUtils.deserialize(b);
-			System.out.println("Resposta:" + response);
 
 			return response;
 		}

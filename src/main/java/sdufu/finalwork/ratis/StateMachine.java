@@ -25,8 +25,6 @@ public class StateMachine extends BaseStateMachine {
 		Request req = SerializationUtils.deserialize(request.getContent().toByteArray());
 		BigInteger key = req.getKey();
 
-		System.out.println("QUERY: " + this.repository.database.toString());
-
 		Response response = new Response();
 		Document doc = this.repository.get(req.getKey());
 
@@ -35,7 +33,9 @@ public class StateMachine extends BaseStateMachine {
 
 		ByteString result = ByteString.copyFrom(SerializationUtils.serialize(response));
 
-		LOG.debug("GET: {} = {}", key, doc);
+		LOG.info("GET: {} = {}", key, doc);
+
+		System.out.println("DATABASE: " + this.repository.database.toString());
 
 		return CompletableFuture.completedFuture(Message.valueOf(result));
 	}
@@ -46,9 +46,6 @@ public class StateMachine extends BaseStateMachine {
 		ByteString data = entry.getStateMachineLogEntry().getLogData();
 		Request req = SerializationUtils.deserialize(data.toByteArray());
 
-		System.out.println("OP: " + req.getOperation());
-
-		CompletableFuture<Message> future;
 		Response response = new Response();
 
 		if (req.getOperation() == Operation.SET || req.getOperation() == Operation.TEST_AND_SET) {
@@ -71,7 +68,7 @@ public class StateMachine extends BaseStateMachine {
 		}
 
 		ByteString resp = ByteString.copyFrom(SerializationUtils.serialize(response));
-		future = CompletableFuture.completedFuture(Message.valueOf(resp));
+		CompletableFuture<Message> future = CompletableFuture.completedFuture(Message.valueOf(resp));
 
 		RaftProtos.RaftPeerRole role = trx.getServerRole();
 		LOG.info("{}:{} {} {}", req.getOperation(), role, getId(), req.getKey());

@@ -18,6 +18,14 @@
 				<file.path>sdufu.finalwork.main.Client</file.path>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>ratis</id>
+			<properties>
+				<jar.name>ratis</jar.name>
+				<file.path>sdufu.finalwork.main.RatisServer</file.path>
+			</properties>
+		</profile>
 
 		<profile>
 			<id>server</id>

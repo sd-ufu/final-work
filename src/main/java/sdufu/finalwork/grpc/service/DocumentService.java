@@ -48,7 +48,7 @@ public class DocumentService {
 	/*
 	 * Method to get document on database by key
 	 */
-	public Document get(BigInteger key) throws DocumentException {
+	public Document get(BigInteger key) {
 		try {
 			Request req = new Request(key, Operation.GET);
 			Document doc = this.client.send(req).getDocument();
@@ -56,9 +56,9 @@ public class DocumentService {
 			return doc;
 		} catch (IOException e) {
 			e.printStackTrace();
-
-			throw new DocumentException(DocumentExceptionTypes.DOCUMENT_DOES_NOT_EXIST);
 		}
+
+		return null;
 	}
 
 	/*
