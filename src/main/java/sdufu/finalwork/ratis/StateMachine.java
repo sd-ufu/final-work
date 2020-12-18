@@ -33,7 +33,7 @@ public class StateMachine extends BaseStateMachine {
 
 		ByteString result = ByteString.copyFrom(SerializationUtils.serialize(response));
 
-		LOG.info("GET: {} = {}", key, doc);
+		LOG.debug("GET: {} = {}", key, doc);
 
 		System.out.println("DATABASE: " + this.repository.database.toString());
 

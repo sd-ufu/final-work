@@ -154,7 +154,6 @@ public class DocumentService {
 		req.setVersion(document.getVersion());
 
 		Response r = this.client.send(req);
-		System.out.println("SET: " + r.toString());
 
 		return this.get(key);
 	}

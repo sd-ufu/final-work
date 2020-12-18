@@ -21,11 +21,11 @@ ETAPAS PARA COMPILAR E RODAR O PROJETO
 
 9) Execute este comando para iniciar uma máquina de estado: `java -jar target/finalwork-ratis.jar MAQUINA_1`.
 
-10) Execute este comando para iniciar o servidor (Execute esse comando após ter iniciado todas as máquinas de estado): `java -jar target/finalwork-server.jar 9089`.
+10) Execute este comando para iniciar o servidor (Execute esse comando após ter iniciado todas as máquinas de estado): `java -jar target/finalwork-server.jar {{PORTA}}`.
 
-11) Execute este comando para iniciar o cliente e executar ele lendo os arquivos na pastsa **files/input** (ao final do processo, um arquivo de log para cada arquivo de entrada é gerado na pasta **files/output**): `SCOPE=FILE java -jar target/finalwork-client.jar localhost 9089`.
+11) Execute este comando para iniciar o cliente e executar ele lendo os arquivos na pastsa **files/input** (ao final do processo, um arquivo de log para cada arquivo de entrada é gerado na pasta **files/output**): `SCOPE=FILE java -jar target/finalwork-client.jar {{HOST}} {{PORTA}}`.
 
-11) Execute este comando para iniciar o cliente e executar a interface de terminal: `SCOPE=TERMINAL java -jar target/finalwork-client.jar localhost 9089`.
+11) Execute este comando para iniciar o cliente e executar a interface de terminal: `SCOPE=TERMINAL java -jar target/finalwork-client.jar {{HOST}} {{PORTA}}`.
 
 
 FORMATOS PARA O ARQUIVO DE FILES/ADDRESS
