@@ -19,7 +19,7 @@ ETAPAS PARA COMPILAR E RODAR O PROJETO
 
 8) Escreva no arquivo **files/address** as máquinas de estado (descrição a baixo de como fazer isso)
 
-9) Execute este comando para iniciar uma máquina de estado: `java -jar target/finalwork-ratis.jar MAQUINA_1`.
+9) Execute este comando para iniciar uma máquina de estado: `java -jar target/finalwork-ratis.jar {{NOME_DA_MAQUINA}}`.
 
 10) Execute este comando para iniciar o servidor (Execute esse comando após ter iniciado todas as máquinas de estado): `java -jar target/finalwork-server.jar {{PORTA}}`.
 
